@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>小可爱除草大逃亡 · Sunny Coast Run</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game" width="960" height="540"></canvas>
+
+  <div id="overlay" class="screen">
+    <div class="panel">
+      <h1>小可爱除草大逃亡</h1>
+      <p class="sub">阳光海岸 · 除草资格考试特训</p>
+      <ul class="how">
+        <li><b>空格 / ↑ / 点击</b>：跳跃（可二段跳）</li>
+        <li>吃到 <b>🎸 应援吉他</b>：腾空 10 秒，无敌撞碎障碍</li>
+        <li>地面断裂处会自动进入 <b>飞行区</b>，用 <b>方向键 / 拖拽</b> 自由移动</li>
+        <li>撞到东西会被后面的讨伐怪追近，被追上就结束</li>
+      </ul>
+      <button id="btn-start" class="btn">开始打工</button>
+      <p class="tip">M 键静音 · P 键暂停</p>
+    </div>
+  </div>
+
+  <div id="gameover" class="screen hidden">
+    <div class="panel">
+      <h1 id="go-title">被讨伐了……</h1>
+      <div class="stats">
+        <div><span id="go-dist">0</span><small>米</small></div>
+        <div><span id="go-coins">0</span><small>工资</small></div>
+        <div><span id="go-best">0</span><small>最好成绩</small></div>
+      </div>
+      <p id="go-cert" class="cert"></p>
+      <button id="btn-retry" class="btn">再来一次</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/art.js"></script>
+<script src="js/world.js"></script>
+<script src="js/game.js"></script>
+<script src="js/render.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
