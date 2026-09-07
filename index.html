@@ -1,50 +1,32 @@
 <!doctype html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>小可爱除草大逃亡 · Sunny Coast Run</title>
-<link rel="stylesheet" href="css/style.css">
-</head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>吉伊卡哇 · 草原小日子</title><link rel="stylesheet" href="css/style.css"></head>
 <body>
-<div id="stage">
-  <canvas id="game" width="960" height="540"></canvas>
-
-  <div id="overlay" class="screen">
-    <div class="panel">
-      <h1>小可爱除草大逃亡</h1>
-      <p class="sub">阳光海岸 · 除草资格考试特训</p>
-      <ul class="how">
-        <li><b>空格 / ↑ / 点击</b>：跳跃（可二段跳）</li>
-        <li>吃到 <b>🎸 应援吉他</b>：腾空 10 秒，无敌撞碎障碍</li>
-        <li>地面断裂处会自动进入 <b>飞行区</b>，用 <b>方向键 / 拖拽</b> 自由移动</li>
-        <li>撞到东西会被后面的讨伐怪追近，被追上就结束</li>
-      </ul>
-      <button id="btn-start" class="btn">开始打工</button>
-      <p class="tip">M 键静音 · P 键暂停</p>
-    </div>
-  </div>
-
-  <div id="gameover" class="screen hidden">
-    <div class="panel">
-      <h1 id="go-title">被讨伐了……</h1>
-      <div class="stats">
-        <div><span id="go-dist">0</span><small>米</small></div>
-        <div><span id="go-coins">0</span><small>工资</small></div>
-        <div><span id="go-best">0</span><small>最好成绩</small></div>
-      </div>
-      <p id="go-cert" class="cert"></p>
-      <button id="btn-retry" class="btn">再来一次</button>
-    </div>
-  </div>
+<main id="app">
+<header class="site-header"><a class="brand" href="./"><span class="brand-mark">ち</span><span>草原小日子<small>CHIIKAWA · LITTLE MEADOW DAYS</small></span></a><button id="btn-mute" class="quiet-button">音效：开</button></header>
+<section id="lobby" class="lobby">
+<div class="intro"><div class="eyebrow">一场软乎乎的小冒险</div><h1>今天，也一起<br><em>努力一下吧。</em></h1><p>穿过花田，收集打工的报酬。<br>和小伙伴躲开怪物，向除草合格证出发。</p><div class="intro-tags"><span>草原漫游</span><span>轻松跑酷</span><span>本机存档</span></div></div>
+<div class="selection"><div class="section-heading"><span>01 / 选择今天的小伙伴</span><small>三个伙伴 · 同样的勇气</small></div>
+<div id="characters" class="characters"></div><p id="character-line" class="character-line"></p>
+<button id="btn-start" class="primary" disabled>正在整理冒险背包…</button><button id="btn-collection" class="quiet-button collection-button">查看我的除草证 ↗</button>
+<p id="load-message" class="load-message" role="status">正在加载插画素材</p>
 </div>
-
-<script src="js/config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/art.js"></script>
-<script src="js/world.js"></script>
-<script src="js/game.js"></script>
-<script src="js/render.js"></script>
-<script src="js/main.js"></script>
-</body>
-</html>
+<div class="guide"><div><img src="assets/coin.png" alt=""><span><b>金色，放心收集</b><small>沿着金币的弧线跳起来</small></span></div><div><img src="assets/mushroom.png" alt=""><span><b>红色 !，需要躲开</b><small>怪物和荆棘都会标出危险</small></span></div><div><img src="assets/platform.png" alt=""><span><b>绿色顶面，可以站立</b><small>远处小屋与花田只是背景</small></span></div></div>
+</section>
+<section id="play" hidden>
+<div class="game-heading"><span>草原特训 <small>MEADOW PRACTICE</small></span><button id="btn-home" class="quiet-button">返回小屋</button></div>
+<div id="stage"><canvas id="game" width="960" height="540" aria-label="吉伊卡哇跑酷游戏"></canvas>
+<div id="hud" class="hud"><div class="score"><span>打工报酬 <b><img src="assets/coin.png" alt=""><strong id="hud-coins">0</strong></b></span><span>冒险距离 <b><strong id="hud-distance">0</strong><small> m</small></b></span></div><div class="certificate-progress"><span>除草检定 <b id="hud-level">备考</b></span><div class="progress"><i id="cert-progress"></i></div><small>每 800 m 晋升一级</small></div></div>
+<div id="hazard-markers" aria-hidden="true"></div><div id="banner" hidden role="status"></div><div id="hud-flight"></div>
+<div id="chase" class="chase"><span>奇美拉正在追赶</span><div class="progress"><i id="lead-progress"></i></div></div>
+<button id="btn-pause" class="pause-button">暂停 II</button>
+<div id="pause-screen" class="veil" hidden><div class="dialog"><div class="eyebrow">TAKE A LITTLE BREAK</div><h2>喘口气，再出发。</h2><button id="btn-resume" class="primary">继续冒险</button></div></div>
+<div id="gameover" class="veil" hidden><div class="dialog result"><div class="eyebrow">TODAY'S LITTLE ACHIEVEMENT</div><h2 id="go-title">今天也很努力了！</h2><div class="result-stats"><div><b id="go-dist">0</b><small>本次 / 米</small></div><div><b id="go-coins">0</b><small>打工报酬</small></div><div><b id="go-best">0</b><small>最远 / 米</small></div></div><p id="go-cert"></p><div id="result-certificate"></div><button id="btn-retry" class="primary">再跑一次 →</button><button id="btn-characters" class="quiet-button">换个小伙伴</button></div></div>
+</div>
+<div class="control-guide"><span><kbd>空格</kbd> / 点击 · 二段跳　 <kbd>方向键</kbd> / 拖动 · 应援飞行</span><span><kbd>P</kbd> 暂停　<kbd>M</kbd> 音效</span></div>
+<button id="btn-jump" class="mobile-jump">跳跃 ↑</button>
+</section>
+<footer>慢一点也没关系，每一步都算数。<span>非官方同人 · 个人游玩</span></footer>
+</main>
+<dialog id="collection"><button id="close-collection" class="close-button" aria-label="关闭">×</button><div class="eyebrow">MY LITTLE COLLECTION</div><h2>努力，留下了证明。</h2><div id="collection-certificate"></div><p class="collection-note">保存于当前浏览器 · 最高等级由三个伙伴共享</p></dialog>
+<script src="js/config.js"></script><script src="js/utils.js"></script><script src="js/raster.js"></script><script src="js/world.js"></script><script src="js/game.js"></script><script src="js/render.js"></script><script src="js/main.js"></script>
+</body></html>

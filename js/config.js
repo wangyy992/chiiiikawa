@@ -7,7 +7,7 @@ window.CFG = {
   SEA_Y: 470,             // 飞行区海平面
   PLAYER_HOME_X: 250,     // 角色默认屏幕 x
   PLAYER_W: 34,
-  PLAYER_H: 44,
+  PLAYER_H: 58,
 
   // —— 地面状态（RUN）物理 ——
   GRAVITY: 2500,          // px/s^2
@@ -30,8 +30,8 @@ window.CFG = {
   ITEM_FLY_TIME: 10,      // 吉他道具腾空时长（秒）
 
   // —— 速度与难度 ——
-  BASE_SPEED: 330,
-  MAX_SPEED: 620,
+  BASE_SPEED: 290,
+  MAX_SPEED: 470,
   SPEED_PER_M: 0.11,      // 每米增加的速度
 
   // —— 讨伐怪追击 ——

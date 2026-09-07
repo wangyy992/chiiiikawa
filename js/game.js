@@ -17,7 +17,7 @@
       this.keys = new Set();
       this.pointer = { down: false, x: 0, y: 0 };
       this.onGameOver = () => {};
-      this.best = Number(localStorage.getItem('chii_best') || 0);
+      this.best = Math.max(0, Number(g.Save.get('chii_best', 0)) || 0);
       this.phase = 'ready';           // ready | playing | paused | over
       this.reset();
     }
@@ -28,6 +28,9 @@
       this.camX = 0;
       this.distance = 0;
       this.coins = 0;
+      this.certLevel = 0;
+      this.keys.clear();
+      this.pointer.down = false;
       this.speed = C.BASE_SPEED;
       this.shake = 0;
       this.flash = 0;
@@ -95,6 +98,15 @@
       this.camX += this.speed * dt;
       this.distance = this.camX / 10;                      // 10px = 1m
       this.world.update(this.camX, this.distance);
+      const level = Math.min(5, Math.floor(this.distance / C.CERT_STEP));
+      if (level > this.certLevel) {
+        this.certLevel = level;
+        this.certBest = Math.max(this.certBest || 0, level);
+        g.Save.set('chii_cert', this.certBest);
+        this.banner = {text: '除草检定合格！获得' + ['','五级','四级','三级','二级','一级'][level] + '证书', life: 3};
+        this.spark(this.worldX, this.p.y - 45, '#f1c966', 32);
+        Sfx.power();
+      }
 
       this.updateStateMachine(dt);
       if (this.p.state === 'RUN') this.updateRun(dt); else this.updateFly(dt);
@@ -354,7 +366,7 @@
       this.phase = 'over';
       Sfx.dead();
       const d = Math.floor(this.distance);
-      if (d > this.best) { this.best = d; localStorage.setItem('chii_best', String(d)); }
+      if (d > this.best) { this.best = d; g.Save.set('chii_best', d); }
       this.onGameOver({
         reason, distance: d, coins: this.coins, best: this.best,
         cert: Math.floor(this.distance / C.CERT_STEP),
