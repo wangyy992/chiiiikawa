@@ -4,7 +4,7 @@ const saved=Number(g.Save.get('chii_cert',0));game.certBest=Number.isFinite(save
 game.character=g.Save.get('chii_character','chiikawa');if(!g.Characters.some(h=>h.id===game.character))game.character='chiikawa';
 let loaded=false;
 const labels=['备考中','五级','四级','三级','二级','一级'];
-function select(id){game.character=id;g.Save.set('chii_character',id);document.querySelectorAll('.character').forEach(b=>{const yes=b.dataset.character===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});$('character-line').textContent=g.Characters.find(h=>h.id===id).line}
+function select(id){game.character=id;g.Save.set('chii_character',id);document.querySelectorAll('.character').forEach(b=>{const yes=b.dataset.character===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});const h=g.Characters.find(h=>h.id===id);$('character-line').innerHTML='<span>'+h.line+'</span><b>'+h.ability+'</b>'}
 for(const h of g.Characters){const b=document.createElement('button');b.className='character';b.dataset.character=h.id;b.innerHTML='<span class="portrait"><img src="assets/'+h.id+'.png" alt="'+h.name+'"></span><b>'+h.name+'</b><small>'+h.en+'</small>';b.onclick=()=>select(h.id);$('characters').appendChild(b)}select(game.character);
 function license(){const h=g.Characters.find(h=>h.id===game.character);return '<div class="license"><div class="license-header">草むしり検定 · 除草合格证</div><div class="license-body"><img class="license-photo" src="assets/'+h.id+'.png" alt="'+h.name+'"><div class="license-info"><b>'+h.name+'</b><br>检定资格　'+labels[game.certBest]+'<br>最远记录　'+game.best+' m</div></div><span class="license-stamp">'+(game.certBest?'合 格':'备 考')+'</span><small>MEADOW CERTIFICATE · 努力的每一天，都值得收藏</small></div>'}
 $('btn-collection').onclick=()=>{$('collection-certificate').innerHTML=license();$('collection').showModal()};
@@ -16,7 +16,7 @@ $('btn-start').onclick=start;$('btn-retry').onclick=start;$('btn-characters').on
 function pause(){if(game.phase==='playing'){resetInput();game.phase='paused'}else if(game.phase==='paused')game.phase='playing'}
 $('btn-pause').onclick=pause;$('btn-resume').onclick=pause;
 function mute(){S.muted=!S.muted;$('btn-mute').textContent=S.muted?'音效：关':'音效：开'}$('btn-mute').onclick=mute;
-game.onGameOver=r=>{$('go-title').textContent=r.reason==='caught'?'被追上了，明天再努力！':'今天也很努力了！';$('go-dist').textContent=r.distance;$('go-coins').textContent=r.coins;$('go-best').textContent=r.best;$('go-cert').textContent='本次检定 · '+labels[Math.min(5,r.cert)];$('result-certificate').innerHTML=license();$('gameover').hidden=false};
+game.onGameOver=r=>{$('go-title').textContent=r.reason==='caught'?'被追上了，明天再努力！':'今天也很努力了！';$('go-dist').textContent=r.distance;$('go-coins').textContent=r.coins;$('go-best').textContent=r.best;$('go-combo').textContent='最高连续报酬 × '+game.bestCombo;$('go-cert').textContent='本次检定 · '+labels[Math.min(5,r.cert)];$('result-certificate').innerHTML=license();$('gameover').hidden=false};
 const jumps=new Set(['Space','ArrowUp','KeyW']);
 addEventListener('keydown',e=>{if(e.target.closest?.('button,dialog,input'))return;if(e.code==='KeyM'&&!e.repeat){mute();return}if(e.code==='KeyP'&&!e.repeat){pause();return}if(!['playing','paused'].includes(game.phase))return;if(jumps.has(e.code)||e.code.startsWith('Arrow'))e.preventDefault();game.keys.add(e.code);if(!e.repeat&&jumps.has(e.code)&&game.p.state==='RUN')game.pressJump()});
 addEventListener('keyup',e=>{game.keys.delete(e.code);if(jumps.has(e.code))game.releaseJump()});

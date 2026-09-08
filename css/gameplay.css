@@ -1,0 +1,61 @@
+.character-line span,
+.character-line b {
+  display: block;
+}
+
+#go-combo {
+  margin: 10px 0 -5px;
+  color: #a47d2c;
+  font-size: 11px;
+}
+
+.character-line b {
+  margin-top: 7px;
+  color: var(--green);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+#combo {
+  position: absolute;
+  left: 50%;
+  top: 14%;
+  transform: translateX(-50%);
+  padding: 8px 14px;
+  border: 1px solid #ead48b;
+  border-radius: 20px;
+  background: #fff7cdeb;
+  color: #7c6330;
+  box-shadow: 0 4px 12px #72551d12;
+  font-size: 11px;
+  text-align: center;
+  pointer-events: none;
+  animation: combo-pop .2s ease-out;
+}
+
+#combo b {
+  margin-right: 3px;
+  font-size: 18px;
+}
+
+#combo small {
+  display: block;
+  margin-top: 1px;
+  color: #a0844a;
+  font-size: 7px;
+}
+
+@keyframes combo-pop {
+  from { transform: translateX(-50%) scale(.8); opacity: .3; }
+}
+
+@media (max-width: 800px) {
+  #combo { top: 21%; padding: 5px 10px; font-size: 8px; }
+  #combo b { font-size: 13px; }
+  #combo small { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #combo { animation: none; }
+}

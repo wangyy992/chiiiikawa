@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>吉伊卡哇 · 草原小日子</title><link rel="stylesheet" href="css/style.css"></head>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>吉伊卡哇 · 草原小日子</title><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/gameplay.css"></head>
 <body>
 <main id="app">
 <header class="site-header"><a class="brand" href="./"><span class="brand-mark">ち</span><span>草原小日子<small>CHIIKAWA · LITTLE MEADOW DAYS</small></span></a><button id="btn-mute" class="quiet-button">音效：开</button></header>
@@ -16,11 +16,11 @@
 <div class="game-heading"><span>草原特训 <small>MEADOW PRACTICE</small></span><button id="btn-home" class="quiet-button">返回小屋</button></div>
 <div id="stage"><canvas id="game" width="960" height="540" aria-label="吉伊卡哇跑酷游戏"></canvas>
 <div id="hud" class="hud"><div class="score"><span>打工报酬 <b><img src="assets/coin.png" alt=""><strong id="hud-coins">0</strong></b></span><span>冒险距离 <b><strong id="hud-distance">0</strong><small> m</small></b></span></div><div class="certificate-progress"><span>除草检定 <b id="hud-level">备考</b></span><div class="progress"><i id="cert-progress"></i></div><small>每 800 m 晋升一级</small></div></div>
-<div id="hazard-markers" aria-hidden="true"></div><div id="banner" hidden role="status"></div><div id="hud-flight"></div>
+<div id="hazard-markers" aria-hidden="true"></div><div id="banner" hidden role="status"></div><div id="hud-flight"></div><div id="combo" hidden><b id="combo-count">2</b> 连续报酬<small>每 5 枚奖励金币并拉开追击</small></div>
 <div id="chase" class="chase"><span>奇美拉正在追赶</span><div class="progress"><i id="lead-progress"></i></div></div>
 <button id="btn-pause" class="pause-button">暂停 II</button>
 <div id="pause-screen" class="veil" hidden><div class="dialog"><div class="eyebrow">TAKE A LITTLE BREAK</div><h2>喘口气，再出发。</h2><button id="btn-resume" class="primary">继续冒险</button></div></div>
-<div id="gameover" class="veil" hidden><div class="dialog result"><div class="eyebrow">TODAY'S LITTLE ACHIEVEMENT</div><h2 id="go-title">今天也很努力了！</h2><div class="result-stats"><div><b id="go-dist">0</b><small>本次 / 米</small></div><div><b id="go-coins">0</b><small>打工报酬</small></div><div><b id="go-best">0</b><small>最远 / 米</small></div></div><p id="go-cert"></p><div id="result-certificate"></div><button id="btn-retry" class="primary">再跑一次 →</button><button id="btn-characters" class="quiet-button">换个小伙伴</button></div></div>
+<div id="gameover" class="veil" hidden><div class="dialog result"><div class="eyebrow">TODAY'S LITTLE ACHIEVEMENT</div><h2 id="go-title">今天也很努力了！</h2><div class="result-stats"><div><b id="go-dist">0</b><small>本次 / 米</small></div><div><b id="go-coins">0</b><small>打工报酬</small></div><div><b id="go-best">0</b><small>最远 / 米</small></div></div><p id="go-combo"></p><p id="go-cert"></p><div id="result-certificate"></div><button id="btn-retry" class="primary">再跑一次 →</button><button id="btn-characters" class="quiet-button">换个小伙伴</button></div></div>
 </div>
 <div class="control-guide"><span><kbd>空格</kbd> / 点击 · 二段跳　 <kbd>方向键</kbd> / 拖动 · 应援飞行</span><span><kbd>P</kbd> 暂停　<kbd>M</kbd> 音效</span></div>
 <button id="btn-jump" class="mobile-jump">跳跃 ↑</button>

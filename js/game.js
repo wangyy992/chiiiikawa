@@ -28,6 +28,9 @@
       this.camX = 0;
       this.distance = 0;
       this.coins = 0;
+      this.combo = 0;
+      this.bestCombo = 0;
+      this.comboTimer = 0;
       this.certLevel = 0;
       this.keys.clear();
       this.pointer.down = false;
@@ -35,6 +38,7 @@
       this.shake = 0;
       this.flash = 0;
       this.banner = null;
+      this.warnedSkyX = -1;
       this.particles = [];
       this.lead = C.LEAD_START;
       this.chaserY = C.GROUND_Y;
@@ -104,6 +108,7 @@
         this.certBest = Math.max(this.certBest || 0, level);
         g.Save.set('chii_cert', this.certBest);
         this.banner = {text: '除草检定合格！获得' + ['','五级','四级','三级','二级','一级'][level] + '证书', life: 3};
+        this.lead = Math.min(C.LEAD_MAX, this.lead + 50);
         this.spark(this.worldX, this.p.y - 45, '#f1c966', 32);
         Sfx.power();
       }
@@ -124,6 +129,12 @@
       const p = this.p;
       const aheadType = this.world.typeAt(this.worldX + 60);
       const hereType = this.world.typeAt(this.worldX);
+      const incoming = this.world.spanAt(this.worldX + 320);
+
+      if (p.state === 'RUN' && incoming?.type === 'sky' && incoming.x0 !== this.warnedSkyX) {
+        this.warnedSkyX = incoming.x0;
+        this.banner = { text: '前方裂谷 · 准备控制飞行方向', life: 1.5 };
+      }
 
       // 1) 道具计时
       if (p.state === 'FLY' && p.flyReason === 'item') {
@@ -188,7 +199,7 @@
           p.buffer = 0; Sfx.jump();
           this.puff(this.worldX, p.y);
         } else if (p.jumps < C.MAX_JUMPS) {
-          p.vy = C.JUMP_V * 0.88; p.jumps++;
+          p.vy = C.JUMP_V * (this.character === 'usagi' ? 1.03 : 0.88); p.jumps++;
           p.buffer = 0; Sfx.jump();
           this.puff(this.worldX, p.y, '#cfe8ff');
         }
@@ -200,7 +211,7 @@
       let newY = p.y + p.vy * dt;
 
       // 地面 / 高台碰撞：只在下落时判定，允许从下方穿过高台
-      const surfaces = this.world.surfacesAt(this.worldX);
+      const surfaces = this.world.surfacesAt(this.worldX, 12);
       let landed = false;
       if (p.vy >= 0) {
         for (const sy of surfaces) {
@@ -214,7 +225,8 @@
         p.vy = 0; p.onGround = true; p.jumps = 0; p.coyote = C.COYOTE;
       } else {
         // 脚下是否还有支撑（跑出高台边缘 / 地面断开）
-        const still = surfaces.some((sy) => Math.abs(p.y - sy) < 1.5);
+        const support = this.world.surfacesAt(this.worldX, 12);
+        const still = support.some((sy) => Math.abs(p.y - sy) < 3);
         if (p.onGround && !still) { p.onGround = false; p.coyote = C.COYOTE; }
       }
     }
@@ -268,11 +280,23 @@
 
     collect() {
       const pr = this.playerRect();
+      const coinRect = this.character === 'hachiware'
+        ? { x: pr.x - 24, y: pr.y - 22, w: pr.w + 48, h: pr.h + 44 }
+        : pr;
       for (const c of this.world.coins) {
         if (c.dead) continue;
-        if (U.aabb(pr, { x: c.x - 11, y: c.y - 11, w: 22, h: 22 })) {
+        if (U.aabb(coinRect, { x: c.x - 11, y: c.y - 11, w: 22, h: 22 })) {
           c.dead = true;
           this.coins++;
+          this.combo++;
+          this.bestCombo = Math.max(this.bestCombo, this.combo);
+          this.comboTimer = 2.1;
+          if (this.combo % 5 === 0) {
+            this.coins++;
+            this.lead = Math.min(C.LEAD_MAX, this.lead + 12);
+            this.banner = { text: this.combo + ' 连续报酬 · 额外金币！', life: 1.2 };
+            this.spark(c.x, c.y, '#fff2a8', 12);
+          }
           Sfx.coin();
           this.spark(c.x, c.y, '#ffd34d', 5);
         }
@@ -310,7 +334,9 @@
     hurt() {
       const p = this.p;
       p.invuln = C.HIT_INVULN;
-      this.lead -= C.LEAD_HIT;
+      this.lead -= C.LEAD_HIT * (this.character === 'chiikawa' ? 0.72 : 1);
+      this.combo = 0;
+      this.comboTimer = 0;
       this.shake = 14;
       this.flash = 0.5;
       Sfx.hit();
@@ -332,6 +358,10 @@
     updateFx(dt) {
       this.shake = Math.max(0, this.shake - dt * 40);
       this.flash = Math.max(0, this.flash - dt * 1.8);
+      if (this.comboTimer > 0) {
+        this.comboTimer -= dt;
+        if (this.comboTimer <= 0) this.combo = 0;
+      }
       if (this.banner) { this.banner.life -= dt; if (this.banner.life <= 0) this.banner = null; }
       for (const q of this.particles) {
         q.life -= dt;
