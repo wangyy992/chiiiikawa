@@ -1,5 +1,5 @@
 (function(g){
-const C=g.CFG,S=g.Sfx,$=id=>document.getElementById(id),cv=$('game'),game=new g.Game(cv);g.__g=game;
+const C=g.CFG,S=g.Sfx,$=id=>document.getElementById(id),cv=$('game'),stage=$('stage'),game=new g.Game(cv);g.__g=game;
 const saved=Number(g.Save.get('chii_cert',0));game.certBest=Number.isFinite(saved)?Math.min(5,Math.max(0,Math.floor(saved))):0;
 game.character=g.Save.get('chii_character','chiikawa');if(!g.Characters.some(h=>h.id===game.character))game.character='chiikawa';
 let loaded=false;
@@ -10,17 +10,34 @@ function license(){const h=g.Characters.find(h=>h.id===game.character);return '<
 $('btn-collection').onclick=()=>{$('collection-certificate').innerHTML=license();$('collection').showModal()};
 $('close-collection').onclick=()=>$('collection').close();
 function resetInput(){game.keys.clear();game.pointer.down=false;game.releaseJump()}
-function start(){if(!loaded)return;resetInput();$('lobby').hidden=true;$('play').hidden=false;$('gameover').hidden=true;game.start();fit();game.render()}
-function home(){resetInput();game.phase='ready';$('play').hidden=true;$('lobby').hidden=false;$('gameover').hidden=true}
+function start(){if(!loaded)return;resetInput();document.body.classList.add('in-play');$('lobby').hidden=true;$('play').hidden=false;$('gameover').hidden=true;game.start();fit();game.render()}
+function home(){resetInput();document.body.classList.remove('in-play');game.phase='ready';$('play').hidden=true;$('lobby').hidden=false;$('gameover').hidden=true}
 $('btn-start').onclick=start;$('btn-retry').onclick=start;$('btn-characters').onclick=home;$('btn-home').onclick=home;
 function pause(){if(game.phase==='playing'){resetInput();game.phase='paused'}else if(game.phase==='paused')game.phase='playing'}
-$('btn-pause').onclick=pause;$('btn-resume').onclick=pause;
+$('btn-pause').onclick=pause;$('btn-resume').onclick=pause;$('btn-pause-home').onclick=home;
+const full=$('btn-full');
+if(!(stage.requestFullscreen||stage.webkitRequestFullscreen))full.hidden=true;
+full.onclick=async()=>{try{
+ if(document.fullscreenElement){await document.exitFullscreen();return}
+ await (stage.requestFullscreen?stage.requestFullscreen():stage.webkitRequestFullscreen());
+ // 安卓 Chrome 支持真横屏锁定；iOS Safari 会拒绝，此时靠 CSS 旋转兜底
+ screen.orientation?.lock?.('landscape')?.catch?.(()=>{});
+}catch{}};
 function mute(){S.muted=!S.muted;$('btn-mute').textContent=S.muted?'音效：关':'音效：开'}$('btn-mute').onclick=mute;
 game.onGameOver=r=>{$('go-title').textContent=r.reason==='caught'?'被追上了，明天再努力！':'今天也很努力了！';$('go-dist').textContent=r.distance;$('go-coins').textContent=r.coins;$('go-best').textContent=r.best;$('go-combo').textContent='最高连续报酬 × '+game.bestCombo;$('go-cert').textContent='本次检定 · '+labels[Math.min(5,r.cert)];$('result-certificate').innerHTML=license();$('gameover').hidden=false};
 const jumps=new Set(['Space','ArrowUp','KeyW']);
 addEventListener('keydown',e=>{if(e.target.closest?.('button,dialog,input'))return;if(e.code==='KeyM'&&!e.repeat){mute();return}if(e.code==='KeyP'&&!e.repeat){pause();return}if(!['playing','paused'].includes(game.phase))return;if(jumps.has(e.code)||e.code.startsWith('Arrow'))e.preventDefault();game.keys.add(e.code);if(!e.repeat&&jumps.has(e.code)&&game.p.state==='RUN')game.pressJump()});
 addEventListener('keyup',e=>{game.keys.delete(e.code);if(jumps.has(e.code))game.releaseJump()});
-function point(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*C.W,y:(e.clientY-r.top)/r.height*C.H}}
+// 竖屏手机上舞台被 CSS 旋转了 90°，指针坐标要做反向变换。直接读真实变换矩阵，
+// 这样 JS 永远和 CSS 媒体查询保持一致，改 CSS 不会出现「画面对了、点击偏了」。
+function stageRotation(){const tf=getComputedStyle(stage).transform;if(!tf||tf==='none')return 0;try{const m=new DOMMatrixReadOnly(tf);return Math.abs(m.b)>.5?Math.sign(m.b):0}catch{return 0}}
+function point(e){
+ const r=cv.getBoundingClientRect();
+ let x=e.clientX-(r.left+r.width/2),y=e.clientY-(r.top+r.height/2),w=r.width,h=r.height;
+ const rot=stageRotation();
+ if(rot){const t=x;x=rot>0?y:-y;y=rot>0?-t:t;w=r.height;h=r.width}
+ return{x:(x+w/2)/w*C.W,y:(y+h/2)/h*C.H};
+}
 cv.onpointerdown=e=>{if(game.phase!=='playing')return;cv.setPointerCapture(e.pointerId);game.pointer={down:true,...point(e)};if(game.p.state==='RUN')game.pressJump()};
 cv.onpointermove=e=>{if(game.pointer.down)Object.assign(game.pointer,point(e))};
 cv.onpointerup=cv.onpointercancel=()=>{game.pointer.down=false;game.releaseJump()};
