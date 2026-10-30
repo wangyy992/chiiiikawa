@@ -1,12 +1,12 @@
 (function(g){
 const C=g.CFG,S=g.Sfx,$=id=>document.getElementById(id),cv=$('game'),stage=$('stage'),game=new g.Game(cv);g.__g=game;
 const saved=Number(g.Save.get('chii_cert',0));game.certBest=Number.isFinite(saved)?Math.min(5,Math.max(0,Math.floor(saved))):0;
-game.character=g.Save.get('chii_character','chiikawa');if(!g.Characters.some(h=>h.id===game.character))game.character='chiikawa';
+game.character=g.Save.get('chii_character','sprout');if(!g.Characters.some(h=>h.id===game.character))game.character='sprout';
 let loaded=false;
 const labels=['备考中','五级','四级','三级','二级','一级'];
 function select(id){game.character=id;g.Save.set('chii_character',id);document.querySelectorAll('.character').forEach(b=>{const yes=b.dataset.character===id;b.classList.toggle('selected',yes);b.setAttribute('aria-pressed',yes)});const h=g.Characters.find(h=>h.id===id);$('character-line').innerHTML='<span>'+h.line+'</span><b>'+h.ability+'</b>'}
-for(const h of g.Characters){const b=document.createElement('button');b.className='character';b.dataset.character=h.id;b.innerHTML='<span class="portrait"><img src="assets/'+h.id+'.png" alt="'+h.name+'"></span><b>'+h.name+'</b><small>'+h.en+'</small>';b.onclick=()=>select(h.id);$('characters').appendChild(b)}select(game.character);
-function license(){const h=g.Characters.find(h=>h.id===game.character);return '<div class="license"><div class="license-header">草むしり検定 · 除草合格证</div><div class="license-body"><img class="license-photo" src="assets/'+h.id+'.png" alt="'+h.name+'"><div class="license-info"><b>'+h.name+'</b><br>检定资格　'+labels[game.certBest]+'<br>最远记录　'+game.best+' m</div></div><span class="license-stamp">'+(game.certBest?'合 格':'备 考')+'</span><small>MEADOW CERTIFICATE · 努力的每一天，都值得收藏</small></div>'}
+for(const h of g.Characters){const b=document.createElement('button');b.className='character';b.dataset.character=h.id;b.innerHTML='<span class="portrait"><img src="assets/'+h.id+'.svg" alt="'+h.name+'"></span><b>'+h.name+'</b><small>'+h.en+'</small>';b.onclick=()=>select(h.id);$('characters').appendChild(b)}select(game.character);
+function license(){const h=g.Characters.find(h=>h.id===game.character);return '<div class="license"><div class="license-header">草原邮局 · 风邮旅行护照</div><div class="license-body"><img class="license-photo" src="assets/'+h.id+'.svg" alt="'+h.name+'"><div class="license-info"><b>'+h.name+'</b><br>检定资格　'+labels[game.certBest]+'<br>最远记录　'+game.best+' m</div></div><span class="license-stamp">'+(game.certBest?'合 格':'备 考')+'</span><small>MEADOW CERTIFICATE · 努力的每一天，都值得收藏</small></div>'}
 $('btn-collection').onclick=()=>{$('collection-certificate').innerHTML=license();$('collection').showModal()};
 $('close-collection').onclick=()=>$('collection').close();
 function resetInput(){game.keys.clear();game.pointer.down=false;game.releaseJump()}

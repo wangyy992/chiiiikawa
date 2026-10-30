@@ -31,8 +31,8 @@ P.render=function(){
  for(const q of this.world.powerups)if(!q.dead)A.draw(c,'guitar',q.x-this.camX-17,q.y-25+Math.sin(t*3)*5,34,50);
  for(let i=2;i>=0;i--){const x=p.px-this.lead-i*46;A.draw(c,'chimera',x-40,this.chaserY-70-Math.abs(Math.sin(t*9+i))*4,80,70)}
  const air=p.state==='FLY'||!p.onGround;
- const character=this.character||'chiikawa';
- const h=character==='usagi'?98:78,w=character==='usagi'?60:65;
+ const character=this.character||'sprout';
+ const h=character==='bellbird'?98:78,w=character==='bellbird'?60:65;
  const bob=!air?Math.abs(Math.sin(t*14))*3:0;
  c.save();c.translate(p.px,p.y-bob);c.rotate(air?-.07:Math.sin(t*14)*.045);
  if(p.invuln>0&&Math.floor(t*15)%2===0)c.globalAlpha=.4;

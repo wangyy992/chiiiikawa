@@ -107,7 +107,7 @@
         this.certLevel = level;
         this.certBest = Math.max(this.certBest || 0, level);
         g.Save.set('chii_cert', this.certBest);
-        this.banner = {text: '除草检定合格！获得' + ['','五级','四级','三级','二级','一级'][level] + '证书', life: 3};
+        this.banner = {text: '风邮里程合格！获得' + ['','五级','四级','三级','二级','一级'][level] + '证书', life: 3};
         this.lead = Math.min(C.LEAD_MAX, this.lead + 50);
         this.spark(this.worldX, this.p.y - 45, '#f1c966', 32);
         Sfx.power();
@@ -199,7 +199,7 @@
           p.buffer = 0; Sfx.jump();
           this.puff(this.worldX, p.y);
         } else if (p.jumps < C.MAX_JUMPS) {
-          p.vy = C.JUMP_V * (this.character === 'usagi' ? 1.03 : 0.88); p.jumps++;
+          p.vy = C.JUMP_V * (this.character === 'bellbird' ? 1.03 : 0.88); p.jumps++;
           p.buffer = 0; Sfx.jump();
           this.puff(this.worldX, p.y, '#cfe8ff');
         }
@@ -280,7 +280,7 @@
 
     collect() {
       const pr = this.playerRect();
-      const coinRect = this.character === 'hachiware'
+      const coinRect = this.character === 'chestnut'
         ? { x: pr.x - 24, y: pr.y - 22, w: pr.w + 48, h: pr.h + 44 }
         : pr;
       for (const c of this.world.coins) {
@@ -334,7 +334,7 @@
     hurt() {
       const p = this.p;
       p.invuln = C.HIT_INVULN;
-      this.lead -= C.LEAD_HIT * (this.character === 'chiikawa' ? 0.72 : 1);
+      this.lead -= C.LEAD_HIT * (this.character === 'sprout' ? 0.72 : 1);
       this.combo = 0;
       this.comboTimer = 0;
       this.shake = 14;
